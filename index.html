@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Word Scramble Game</title>
+
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #F2C58A;
+  text-align: center;
+  padding-top: 40px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+#timer {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  gap: 12px;
+
+
+  width: 90vw;
+  height: calc(100vh - 140px);
+
+  margin: 0 auto;
+}
+
+.word-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-size: clamp(24px, 6vw, 48px);
+  padding: 30px;
+
+
+  cursor: pointer;
+  border: none;
+  border-radius: 20px;
+  background-color: #ddd;
+  transition: background-color 0.3s;
+}
+
+.word-btn .number {
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.word-btn.revealed {
+  background-color: #6aaa64; /* Wordle green */
+  color: white;
+  cursor: default;
+}
+
+.word-btn:disabled {
+  cursor: default;
+}
+
+  </style>
+
+  
+</head>
+<body>
+  <h1>Word Scramble - Countries in EMEA</h1>
+  <div id="timer">60</div>
+
+  <div class="grid" id="buttonGrid"></div>
+
+  <script>
+    const words = [
+  { answer: "CZECH REPUBLIC", scramble: "EHCCZ PCBLRIEU" },
+  { answer: "FINLAND", scramble: "ILFNDNA" },
+  { answer: "ICELAND", scramble: "INCLEDA" },
+  { answer: "LUXEMBOURG", scramble: "XUUMLBROEG" },
+  { answer: "NETHERLANDS", scramble: "SDTENLNAHRE" },
+  { answer: "PORTUGAL", scramble: "GROUALPT" },
+  { answer: "SWITZERLAND", scramble: "TNWEAIDRZSL" },
+  { answer: "KENYA", scramble: "YAENK" },
+  { answer: "GREECE", scramble: "EECGER" },
+  { answer: "UKRAINE", scramble: "ANRUEIK" }
+];
+
+    let timeLeft = 60;
+    let answeredCount = 0;
+
+    const timerEl = document.getElementById("timer");
+    const grid = document.getElementById("buttonGrid");
+
+    function scramble(word) {
+      return word
+        .split("")
+        .sort(() => Math.random() - 0.5)
+        .join("");
+    }
+
+    // Create buttons
+    words.forEach((word, index) => {
+      const btn = document.createElement("button");
+      btn.className = "word-btn";
+
+      const number = document.createElement("span");
+      number.className = "number";
+      number.textContent = index + 1;
+
+      const text = document.createElement("span");
+      text.textContent = word.scramble;
+
+      btn.appendChild(number);
+      btn.appendChild(text);
+
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("revealed")) return;
+
+        text.textContent = word.answer;
+        btn.classList.add("revealed");
+        btn.disabled = true;
+
+        answeredCount++;
+
+        // Stop timer if all answered
+        if (answeredCount === words.length) {
+          clearInterval(timer);
+          
+        }
+      });
+
+      grid.appendChild(btn);
+    });
+
+    // Timer
+    const timer = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+
+      if (timeLeft === 0) {
+        clearInterval(timer);
+        timerEl.textContent = "Time's up!";
+
+        document.querySelectorAll(".word-btn").forEach(btn => {
+          btn.disabled = true;
+        });
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
